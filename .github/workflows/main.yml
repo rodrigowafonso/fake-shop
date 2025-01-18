@@ -16,11 +16,11 @@ jobs:
         run: echo "Executando o comando Docker Push"
   CD:
     runs-on: ubuntu-latest
-      steps:
-        - name: Autenticar no Azure
-          run: echo "Executando o comando AKS Configure"
-        - name: Configurar o Kubectl
-          run: echo "Executando o comando az aks get-credentials --resource-group KUBERNETES --name cluster-rwa-devops-kubernetes --admin"
-        - name: Deploy dos manifestos no Kubernetes
-          run: echo "Executando o comando kubectl apply"
+    steps:
+      - name: Autenticar no Azure
+        run: echo "Executando o comando AKS Configure"
+      - name: Configurar o Kubectl
+        run: echo "Executando o comando az aks get-credentials --resource-group KUBERNETES --name cluster-rwa-devops-kubernetes --admin"
+      - name: Deploy dos manifestos no Kubernetes
+        run: echo "Executando o comando kubectl apply"
         
