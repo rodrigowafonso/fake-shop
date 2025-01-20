@@ -58,6 +58,7 @@ jobs:
         with:
           manifests: |
               ./src/eks/deployment.yml
+              ./src/prometheus/deployment.yml
           images: |
               rodrigoafonso/fake-shop:v${{ github.run_number }}
         
