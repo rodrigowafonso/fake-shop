@@ -43,7 +43,7 @@ kind: Deployment
 metadata:
   name: fakeshop
 spec:
-  replicas: 10
+  replicas: 1
   selector:
     matchLabels:
       app: fakeshop
@@ -54,7 +54,7 @@ spec:
     spec:
       containers:
         - name: postgre
-          image: rodrigoafonso/fake-shop:v3
+          image: rodrigoafonso/fake-shop
           ports:
             - containerPort: 5000
           env:
