@@ -18,5 +18,5 @@ terraform {
 provider "azurerm" {
   # Configuration options
     features {}
-    subscription_id = "${ secrets.AZURE_SUBSCRIPTION_ID }"
+    subscription_id = ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 }
