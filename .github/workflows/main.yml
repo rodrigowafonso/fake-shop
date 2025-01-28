@@ -85,6 +85,12 @@ jobs:
       
       - name: Terraform Plan
         run: terraform plan -no-color
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
+
+        
   
       # - name: Terraform Azure Apply
       #   uses: haflidif/terraform-azure-apply@v1.0.0
