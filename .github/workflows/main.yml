@@ -90,8 +90,6 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          TF_VAR_appid_azure: ${{ secrets.AZURE_CLIENT_ID }}
-          TF_VAR_apppassword_azure: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
         run: terraform plan -no-color
 
       - name: Terraform Apply
@@ -101,8 +99,6 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}       
-          TF_VAR_appid_azure: ${{ secrets.AZURE_CLIENT_ID }}
-          TF_VAR_apppassword_azure: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
         run: terraform apply -auto-approve
 
         
