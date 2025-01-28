@@ -40,6 +40,10 @@ jobs:
   
   TERRAFORM_INFRA:
     runs-on: ubuntu-latest
+    env:
+      AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+      AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
     
     defaults:
       run:
@@ -58,11 +62,20 @@ jobs:
 
       - name: Set UP Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ secrets.TERRAFORM_VERSION }}
 
       - name: Terraform Init
-        run: terraform init
+        id: init
+        run: terraform init -backend-config="storage_account_name=$AZURE_STORAGE_ACCOUNT" -backend-config="container_name=$AZURE_CONTAINER_NAME" -backend-config="resource_group_name=$AZURE_RESOURCE_GROUP"
       
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
       - name: Terraform Validate
+        id: validate
+        if: success() || failure()
         run: terraform validate -no-color
       
       - name: Terraform Plan
