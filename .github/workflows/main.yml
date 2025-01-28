@@ -44,6 +44,7 @@ jobs:
       AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
       AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
       AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      AZURE_TERRAFORM_TFSTATE_KEY: ${{ secrets.AZURE_TERRAFORM_TFSTATE_KEY }}
     
     defaults:
       run:
@@ -67,7 +68,7 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config="storage_account_name=$AZURE_STORAGE_ACCOUNT" -backend-config="container_name=$AZURE_CONTAINER_NAME" -backend-config="resource_group_name=$AZURE_RESOURCE_GROUP"
+        run: terraform init -backend-config="storage_account_name=$AZURE_STORAGE_ACCOUNT" -backend-config="container_name=$AZURE_CONTAINER_NAME" -backend-config="resource_group_name=$AZURE_RESOURCE_GROUP" -backend-config="key=$AZURE_TERRAFORM_TFSTATE_KEY"
       
       - name: Terraform Format
         id: fmt
