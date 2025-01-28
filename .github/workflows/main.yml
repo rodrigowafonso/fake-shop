@@ -40,6 +40,11 @@ jobs:
   
   TERRAFORM_INFRA:
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./src/terraform
 
     steps:
       - name: Obter o Código do Projeto
@@ -55,7 +60,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        working-directory: ./src/terraform/
         run: terraform init
       
       - name: Terraform Validate
