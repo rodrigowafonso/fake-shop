@@ -37,6 +37,18 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
+  
+  TERRAFORM_INFRA:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obter o Código do Projeto
+        uses: actions/checkout@v4
+      
+      - name: Terraform Azure Plan
+        uses: haflidif/terraform-azure-plan@v1.0.0
+        with:
+          path: ./src/terraform
 
   CD:
     runs-on: ubuntu-latest
