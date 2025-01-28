@@ -59,7 +59,7 @@ jobs:
       
       - name: Terraform Validate
         id: init
-        run: terraform validade -no-color
+        run: terraform validate -no-color
       
       - name: Terraform Plan
         id: plan
