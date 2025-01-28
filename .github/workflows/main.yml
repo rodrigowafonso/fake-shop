@@ -40,6 +40,13 @@ jobs:
   
   TERRAFORM_INFRA:
     runs-on: ubuntu-latest
+    env:
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+      AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SCRECT_ID: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     steps:
       - name: Obter o Código do Projeto
@@ -49,11 +56,12 @@ jobs:
         uses: haflidif/terraform-azure-plan@v1.0.0
         with:
           path: ./src/terraform
-          az_resource_group: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          az_storage_account_name: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          az_storage_container_name: ${{ secrets.AZURE_CONTAINER_NAME }}
-          arm_client_id: ${{ secrets.AZURE_CLIENT_ID }}
-          arm_client_secret: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
+          az_resource_group: $AZURE_RESOURCE_GROUP
+          az_storage_account_name: $AZURE_STORAGE_ACCOUNT
+          az_storage_container_name: $AZURE_CONTAINER_NAME
+          arm_client_id: $AZURE_CLIENT_ID
+          arm_client_secret: $AZURE_CLIENT_SCRECT_ID
+          arm_subscription_id: $AZURE_SUBSCRIPTION_ID
 
   # CD:
   #   runs-on: ubuntu-latest
