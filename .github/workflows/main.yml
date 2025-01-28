@@ -52,11 +52,18 @@ jobs:
           enable-AzPSSession: true
 
       - name: Set UP Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
       
+      - name: Terraform Validate
+        id: init
+        run: terraform validade -no-color
+      
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
   
       # - name: Terraform Azure Apply
       #   uses: haflidif/terraform-azure-apply@v1.0.0
