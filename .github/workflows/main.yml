@@ -40,8 +40,6 @@ jobs:
   
   TERRAFORM_INFRA:
     runs-on: ubuntu-latest
-    env:
-        GITHUB_TOKEN : ${{ secrets.RWA_GITHUB_TOKEN }}
 
     steps:
       - name: Obter o Código do Projeto
@@ -52,24 +50,31 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
+
+      - name: Set UP Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+      
   
-      - name: Terraform Azure Apply
-        uses: haflidif/terraform-azure-apply@v1.0.0
-        with:
-            path: ./src/terraform
-            plan_mode: 'deploy'
-            tf_version: 'latest'
-            tf_var_file: 'terraform.tfvars'
-            tf_state_file: 'terraform.tfstate'
-            az_resource_group: ${{ secrets.AZURE_RESOURCE_GROUP }}
-            az_storage_account_name: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-            az_storage_container_name: ${{ secrets.AZURE_CONTAINER_NAME }}
-            arm_client_id: ${{ secrets.AZURE_CLIENT_ID }}
-            arm_use_oidc: false
-            arm_use_azuread: false
-            arm_client_secret: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
-            arm_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-            arm_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID}}
+      # - name: Terraform Azure Apply
+      #   uses: haflidif/terraform-azure-apply@v1.0.0
+      #   with:
+      #       path: ./src/terraform
+      #       plan_mode: 'deploy'
+      #       tf_version: 'latest'
+      #       tf_var_file: 'terraform.tfvars'
+      #       tf_state_file: 'terraform.tfstate'
+      #       az_resource_group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      #       az_storage_account_name: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+      #       az_storage_container_name: ${{ secrets.AZURE_CONTAINER_NAME }}
+      #       arm_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+      #       arm_use_oidc: false
+      #       arm_use_azuread: false
+      #       arm_client_secret: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
+      #       arm_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+      #       arm_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID}}
             
   # CD:
   #   runs-on: ubuntu-latest
