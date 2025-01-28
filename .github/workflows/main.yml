@@ -10,33 +10,33 @@ on:
 #   contents: read    
 
 jobs:
-  CI:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Obter o Código do Projeto
-        uses: actions/checkout@v4
+  # CI:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Obter o Código do Projeto
+  #       uses: actions/checkout@v4
 
-      - name: Autenticar no Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}      
+  #     - name: Autenticar no Docker Hub
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_PASSWORD }}      
 
-      - name: Construção e Envio da Imagem Docker
-        uses: docker/build-push-action@v6
-        with:
-          context: ./src
-          file: ./src/Dockerfile
-          push: true
-          tags: |
-            rodrigoafonso/fake-shop:latest
-            rodrigoafonso/fake-shop:v${{ github.run_number }}
+  #     - name: Construção e Envio da Imagem Docker
+  #       uses: docker/build-push-action@v6
+  #       with:
+  #         context: ./src
+  #         file: ./src/Dockerfile
+  #         push: true
+  #         tags: |
+  #           rodrigoafonso/fake-shop:latest
+  #           rodrigoafonso/fake-shop:v${{ github.run_number }}
       
-      - name: Autenticar no Azure
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          enable-AzPSSession: true
+  #     - name: Autenticar no Azure
+  #       uses: azure/login@v2
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #         enable-AzPSSession: true
   
   TERRAFORM_INFRA:
     runs-on: ubuntu-latest
@@ -49,41 +49,46 @@ jobs:
         uses: haflidif/terraform-azure-plan@v1.0.0
         with:
           path: ./src/terraform
+          az_resource_group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          az_storage_account_name: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          az_storage_container_name: ${{ secrets.AZURE_CONTAINER_NAME }}
+          arm_client_id: ${{ secrets.AZURE_APP_ID }}
+          arm_client_secret: ${{ secrets.AZURE_APP_PASSWORD }}
 
-  CD:
-    runs-on: ubuntu-latest
-    needs: [CI]
+  # CD:
+  #   runs-on: ubuntu-latest
+  #   needs: [CI]
 
-    permissions:
-      id-token: write
-      contents: read
-      actions: read
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #     actions: read
 
-    steps:
-      - name: Obter o Código do Projeto
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Obter o Código do Projeto
+  #       uses: actions/checkout@v4
 
-      - name: Autenticar no Azure
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          enable-AzPSSession: true
+  #     - name: Autenticar no Azure
+  #       uses: azure/login@v2
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #         enable-AzPSSession: true
       
-      - name: Configurar o Kubectl 
-        run: az aks get-credentials --resource-group KUBERNETES --name ${{ secrets.AZURE_CLUSTERKUBERNETES }} --admin
+  #     - name: Configurar o Kubectl 
+  #       run: az aks get-credentials --resource-group KUBERNETES --name ${{ secrets.AZURE_CLUSTERKUBERNETES }} --admin
 
-      - name: Deploy dos manifestos no Kubernetes
-        uses: Azure/k8s-deploy@v5
-        with:
-          manifests: |
-              ./src/eks/deployment.yml
-              ./src/prometheus/deployment.yml
-          images: |
-              rodrigoafonso/fake-shop:v${{ github.run_number }}
+  #     - name: Deploy dos manifestos no Kubernetes
+  #       uses: Azure/k8s-deploy@v5
+  #       with:
+  #         manifests: |
+  #             ./src/eks/deployment.yml
+  #             ./src/prometheus/deployment.yml
+  #         images: |
+  #             rodrigoafonso/fake-shop:v${{ github.run_number }}
         
-      - name: Deploy dos manifestos Prometheus e Grafana
-        uses: Azure/k8s-deploy@v5
-        with:
-          manifests: |
-              ./src/prometheus/deployment.yml
+  #     - name: Deploy dos manifestos Prometheus e Grafana
+  #       uses: Azure/k8s-deploy@v5
+  #       with:
+  #         manifests: |
+  #             ./src/prometheus/deployment.yml
       
