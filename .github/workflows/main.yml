@@ -70,12 +70,9 @@ jobs:
         with:
           terraform_version: ${{ secrets.TERRAFORM_VERSION }}
 
-      - name: Unlock Terraform State
-        run: terraform force-unlock 037c0bc1-a31a-9589-b887-1546764441cd || true
-
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config="storage_account_name=$AZURE_STORAGE_ACCOUNT" -backend-config="container_name=$AZURE_CONTAINER_NAME" -backend-config="resource_group_name=$AZURE_RESOURCE_GROUP" -backend-config="key=$AZURE_TERRAFORM_TFSTATE_KEY"
+        run: terraform init -reconfigure -backend-config="storage_account_name=$AZURE_STORAGE_ACCOUNT" -backend-config="container_name=$AZURE_CONTAINER_NAME" -backend-config="resource_group_name=$AZURE_RESOURCE_GROUP" -backend-config="key=$AZURE_TERRAFORM_TFSTATE_KEY"
       
       # - name: Terraform Format
       #   id: fmt
