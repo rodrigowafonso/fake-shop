@@ -38,8 +38,6 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
 
-      - name: Provissionando de Cluster Kubernetes
-        uses: 
   CD:
     runs-on: ubuntu-latest
     needs: [CI]
