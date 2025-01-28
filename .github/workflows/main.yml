@@ -55,7 +55,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        working-directory: ../../src/terraform
+        working-directory: ./src/terraform/
         run: terraform init
       
       - name: Terraform Validate
