@@ -45,6 +45,10 @@ jobs:
       AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
       AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
       AZURE_TERRAFORM_TFSTATE_KEY: ${{ secrets.AZURE_TERRAFORM_TFSTATE_KEY }}
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     
     defaults:
       run:
@@ -68,6 +72,8 @@ jobs:
 
       - name: Terraform Init
         id: init
+        env:
+
         run: terraform init -backend-config="storage_account_name=$AZURE_STORAGE_ACCOUNT" -backend-config="container_name=$AZURE_CONTAINER_NAME" -backend-config="resource_group_name=$AZURE_RESOURCE_GROUP" -backend-config="key=$AZURE_TERRAFORM_TFSTATE_KEY"
       
       - name: Terraform Format
