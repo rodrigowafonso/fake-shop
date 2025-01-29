@@ -84,7 +84,7 @@ jobs:
 
       - name: Provisionando o Ambiente
         id: apply
-        run: terraform apply -auto-approve
+        run: terraform destroy -auto-approve
        
   CD:
     runs-on: ubuntu-latest
