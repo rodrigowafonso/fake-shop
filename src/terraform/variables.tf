@@ -4,12 +4,12 @@ variable "regiao" {
   description = "Definindo a regiao do projeto"
 }
 
-variable "ARM_CLIENT_ID" {
+variable "AZURE_APP_ID" {
   type = string
   description = "Variável de Ambiente do Github Secrets"
 }
 
-variable "ARM_CLIENT_SECRET" {
+variable "AZURE_APP_PASSWORD" {
   type = string
   description = "Variável de Ambiente do Github Secrets"
 }

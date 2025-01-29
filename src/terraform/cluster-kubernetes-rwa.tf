@@ -17,10 +17,10 @@ resource "azurerm_kubernetes_cluster" "cluster_aks_devops" {
     os_disk_size_gb = 30
   }
 
-  # service_principal {
-  #   client_id     = var.ARM_CLIENT_ID
-  #   client_secret = var.ARM_CLIENT_SECRET
-  # }
+  service_principal {
+    client_id     = var.AZURE_APP_ID
+    client_secret = var.AZURE_APP_PASSWORD
+  }
 
   role_based_access_control_enabled = true
 
