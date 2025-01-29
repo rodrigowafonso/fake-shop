@@ -95,7 +95,7 @@ jobs:
 
       - name: Provisionando o Ambiente
         id: apply
-        run: terraform apply -auto-approve
+        run: terraform destroy -auto-approve
 
 
   # AKS-DESTROY:
@@ -149,7 +149,7 @@ jobs:
                 
   CD:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.action == 'apply' }}
+    # if: ${{ github.event.inputs.action == 'apply' }}
     needs: [CI, AKS-APPLY]
 
     permissions:
