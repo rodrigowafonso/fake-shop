@@ -5,7 +5,7 @@ data "azurerm_resource_group" "rg_aks_devops" {
 
 resource "azurerm_kubernetes_cluster" "cluster_aks_devops" {
   name                = "cluster-aks-devops"
-  location            = "eastus"
+  location            = var.regiao
   resource_group_name = data.azurerm_resource_group.rg_aks_devops.name
   dns_prefix          = "cluster-aks-devops"
   kubernetes_version  = "1.30.7"
@@ -17,12 +17,11 @@ resource "azurerm_kubernetes_cluster" "cluster_aks_devops" {
     os_disk_size_gb = 30
   }
 
-  service_principal {
-    client_id     = var.AZURE_APP_ID
-    client_secret = var.AZURE_APP_PASSWORD
+  identity {
+    type = "SystemAssigned"
   }
 
-  role_based_access_control_enabled = true
+  # role_based_access_control_enabled = true
 
   tags = {
     Env = "Devops"
