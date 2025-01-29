@@ -5,53 +5,57 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
-# permissions:
-#   id-token: write
-#   contents: read    
+permissions:
+  id-token: write
+  contents: read    
+
+env:
+  AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+  AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
+  AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+  AZURE_TERRAFORM_TFSTATE_KEY: ${{ secrets.AZURE_TERRAFORM_TFSTATE_KEY }}
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
+  AZURE_APP_PASSWORD: ${{ secrets.AZURE_APP_PASSWORD }}  
+  username: ${{ secrets.DOCKERHUB_USERNAME }}
+  password: ${{ secrets.DOCKERHUB_PASSWORD }}
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  TERRAFORM_VERSION: ${{ secrets.TERRAFORM_VERSION }}      
 
 jobs:
-  # CI:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Obter o Código do Projeto
-  #       uses: actions/checkout@v4
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter o Código do Projeto
+        uses: actions/checkout@v4
 
-  #     - name: Autenticar no Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_PASSWORD }}      
+      - name: Autenticar no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: $username
+          password: $password      
 
-  #     - name: Construção e Envio da Imagem Docker
-  #       uses: docker/build-push-action@v6
-  #       with:
-  #         context: ./src
-  #         file: ./src/Dockerfile
-  #         push: true
-  #         tags: |
-  #           rodrigoafonso/fake-shop:latest
-  #           rodrigoafonso/fake-shop:v${{ github.run_number }}
+      - name: Construção e Envio da Imagem Docker
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src
+          file: ./src/Dockerfile
+          push: true
+          tags: |
+            rodrigoafonso/fake-shop:latest
+            rodrigoafonso/fake-shop:v${{ github.run_number }}
       
-  #     - name: Autenticar no Azure
-  #       uses: azure/login@v2
-  #       with:
-  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
-  #         enable-AzPSSession: true
+      - name: Autenticar no Azure
+        uses: azure/login@v2
+        with:
+          creds: $AZURE_CREDENTIALS
+          enable-AzPSSession: true
   
   TERRAFORM_INFRA:
-    runs-on: ubuntu-latest
-    env:
-      AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-      AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
-      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
-      AZURE_TERRAFORM_TFSTATE_KEY: ${{ secrets.AZURE_TERRAFORM_TFSTATE_KEY }}
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
-      AZURE_APP_PASSWORD: ${{ secrets.AZURE_APP_PASSWORD }}
-    
+    runs-on: ubuntu-latest 
     defaults:
       run:
         shell: bash
@@ -64,13 +68,13 @@ jobs:
       - name: Autenticar no Azure
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: $AZURE_CREDENTIALS
           enable-AzPSSession: true
 
       - name: Set UP Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: ${{ secrets.TERRAFORM_VERSION }}
+          terraform_version: $TERRAFORM_VERSION
 
       - name: Terraform Init
         id: init
@@ -87,76 +91,46 @@ jobs:
       
       - name: Terraform Plan
         id: plan
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: terraform plan -no-color
 
       - name: Terraform Apply
         id: apply
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}       
         run: terraform apply -auto-approve
+       
+  CD:
+    runs-on: ubuntu-latest
+    needs: [CI]
 
-        
-  
-      # - name: Terraform Azure Apply
-      #   uses: haflidif/terraform-azure-apply@v1.0.0
-      #   with:
-      #       path: ./src/terraform
-      #       plan_mode: 'deploy'
-      #       tf_version: 'latest'
-      #       tf_var_file: 'terraform.tfvars'
-      #       tf_state_file: 'terraform.tfstate'
-      #       az_resource_group: ${{ secrets.AZURE_RESOURCE_GROUP }}
-      #       az_storage_account_name: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-      #       az_storage_container_name: ${{ secrets.AZURE_CONTAINER_NAME }}
-      #       arm_client_id: ${{ secrets.AZURE_CLIENT_ID }}
-      #       arm_use_oidc: false
-      #       arm_use_azuread: false
-      #       arm_client_secret: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
-      #       arm_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-      #       arm_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID}}
-            
-  # CD:
-  #   runs-on: ubuntu-latest
-  #   needs: [CI]
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
 
-  #   permissions:
-  #     id-token: write
-  #     contents: read
-  #     actions: read
+    steps:
+      - name: Obter o Código do Projeto
+        uses: actions/checkout@v4
 
-  #   steps:
-  #     - name: Obter o Código do Projeto
-  #       uses: actions/checkout@v4
-
-  #     - name: Autenticar no Azure
-  #       uses: azure/login@v2
-  #       with:
-  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
-  #         enable-AzPSSession: true
+      - name: Autenticar no Azure
+        uses: azure/login@v2
+        with:
+          creds: $AZURE_CREDENTIALS
+          enable-AzPSSession: true
       
-  #     - name: Configurar o Kubectl 
-  #       run: az aks get-credentials --resource-group KUBERNETES --name ${{ secrets.AZURE_CLUSTERKUBERNETES }} --admin
+      - name: Configurar o Kubectl 
+        run: az aks get-credentials --resource-group KUBERNETES --name ${{ secrets.AZURE_CLUSTERKUBERNETES }} --admin
 
-  #     - name: Deploy dos manifestos no Kubernetes
-  #       uses: Azure/k8s-deploy@v5
-  #       with:
-  #         manifests: |
-  #             ./src/eks/deployment.yml
-  #             ./src/prometheus/deployment.yml
-  #         images: |
-  #             rodrigoafonso/fake-shop:v${{ github.run_number }}
+      - name: Deploy dos manifestos no Kubernetes
+        uses: Azure/k8s-deploy@v5
+        with:
+          manifests: |
+              ./src/eks/deployment.yml
+              ./src/prometheus/deployment.yml
+          images: |
+              rodrigoafonso/fake-shop:v${{ github.run_number }}
         
-  #     - name: Deploy dos manifestos Prometheus e Grafana
-  #       uses: Azure/k8s-deploy@v5
-  #       with:
-  #         manifests: |
-  #             ./src/prometheus/deployment.yml
+      - name: Deploy dos manifestos Prometheus e Grafana
+        uses: Azure/k8s-deploy@v5
+        with:
+          manifests: |
+              ./src/prometheus/deployment.yml
       
