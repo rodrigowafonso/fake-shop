@@ -82,7 +82,7 @@ jobs:
 
       - name: Terraform Validate
         id: validate
-        if: success() || failure()
+        # if: success() || failure()
         run: terraform validate -no-color
       
       - name: Terraform Plan
