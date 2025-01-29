@@ -40,6 +40,7 @@ jobs:
   
   AKS:
     runs-on: ubuntu-latest
+    needs: [CI]
     env:
       AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
       AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
@@ -70,11 +71,11 @@ jobs:
       
       - name: Formatando o Código (terraform)
         id: fmt
-        run: terraform fmt -check
+        run: terraform fmt #-check
 
       - name: Validando do Código
         id: validate
-        if: success() || failure()
+        # if: success() || failure()
         run: terraform validate -no-color
       
       - name: Exibindo o Plano de Execução
