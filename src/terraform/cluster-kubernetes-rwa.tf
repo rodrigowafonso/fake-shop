@@ -21,8 +21,6 @@ resource "azurerm_kubernetes_cluster" "cluster_aks_devops" {
     type = "SystemAssigned"
   }
 
-  # role_based_access_control_enabled = true
-
   tags = {
     Env = "Devops"
   }
