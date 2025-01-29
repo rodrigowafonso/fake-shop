@@ -4,15 +4,15 @@ on:
   push:
     branches: ["main"]
   workflow_dispatch:
-    inputs:
-        action:
-            description: 'Choose Action: Apply or Destroy'
-            required: true
-            default: 'apply'
-            type: choice
-            options:
-            - apply
-            - destroy
+    # inputs:
+    #     action:
+    #         description: 'Choose Action: Apply or Destroy'
+    #         required: true
+    #         default: 'apply'
+    #         type: choice
+    #         options:
+    #         - apply
+    #         - destroy
 
 permissions:
   id-token: write
@@ -21,7 +21,7 @@ permissions:
 jobs:
   CI:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.action == 'apply' }}
+    # if: ${{ github.event.inputs.action == 'apply' }}
     steps:
       - name: Obter o Código do Projeto
         uses: actions/checkout@v4
@@ -50,7 +50,7 @@ jobs:
   
   AKS-APPLY:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.action == 'apply' }}
+    # if: ${{ github.event.inputs.action == 'apply' }}
     needs: [CI]
     env:
       AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
@@ -98,54 +98,54 @@ jobs:
         run: terraform apply -auto-approve
 
 
-  AKS-DESTROY:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.action == 'destroy' }}
-    needs: [CI]
-    env:
-        AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-        AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
-        AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
-        AZURE_TERRAFORM_TFSTATE_KEY: ${{ secrets.AZURE_TERRAFORM_TFSTATE_KEY }}
-        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
-        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  # AKS-DESTROY:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.event.inputs.action == 'destroy' }}
+  #   needs: [CI]
+  #   env:
+  #       AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+  #       AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
+  #       AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+  #       AZURE_TERRAFORM_TFSTATE_KEY: ${{ secrets.AZURE_TERRAFORM_TFSTATE_KEY }}
+  #       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  #       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SCRECT_ID }}
+  #       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  #       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./src/terraform
+  #   defaults:
+  #     run:
+  #       shell: bash
+  #       working-directory: ./src/terraform
       
-    steps:
-      - name: Obter o Código do Projeto
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Obter o Código do Projeto
+  #       uses: actions/checkout@v4
       
-      - name: Set UP Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-            terraform_version: ${{ secrets.TERRAFORM_VERSION }}
+  #     - name: Set UP Terraform
+  #       uses: hashicorp/setup-terraform@v3
+  #       with:
+  #           terraform_version: ${{ secrets.TERRAFORM_VERSION }}
 
-      - name: Inicializando o Terraform (terraform init)
-        id: init
-        run: terraform init -backend-config="storage_account_name=$AZURE_STORAGE_ACCOUNT" -backend-config="container_name=$AZURE_CONTAINER_NAME" -backend-config="resource_group_name=$AZURE_RESOURCE_GROUP" -backend-config="key=$AZURE_TERRAFORM_TFSTATE_KEY"
+  #     - name: Inicializando o Terraform (terraform init)
+  #       id: init
+  #       run: terraform init -backend-config="storage_account_name=$AZURE_STORAGE_ACCOUNT" -backend-config="container_name=$AZURE_CONTAINER_NAME" -backend-config="resource_group_name=$AZURE_RESOURCE_GROUP" -backend-config="key=$AZURE_TERRAFORM_TFSTATE_KEY"
       
-      - name: Formatando o Código (terraform)
-        id: fmt
-        run: terraform fmt #-check
+  #     - name: Formatando o Código (terraform)
+  #       id: fmt
+  #       run: terraform fmt #-check
 
-      - name: Validando do Código
-        id: validate
-        # if: success() || failure()
-        run: terraform validate -no-color
+  #     - name: Validando do Código
+  #       id: validate
+  #       # if: success() || failure()
+  #       run: terraform validate -no-color
       
-      - name: Exibindo o Plano de Execução
-        id: plan
-        run: terraform plan -no-color
+  #     - name: Exibindo o Plano de Execução
+  #       id: plan
+  #       run: terraform plan -no-color
 
-      - name: Provisionando o Ambiente
-        id: apply
-        run: terraform apply -auto-approve
+  #     - name: Provisionando o Ambiente
+  #       id: apply
+  #       run: terraform apply -auto-approve
                 
   CD:
     runs-on: ubuntu-latest
