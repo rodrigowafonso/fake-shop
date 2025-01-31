@@ -8,7 +8,7 @@ on:
       destroy:
         description: Set to true to destroy th VPC and AKS
         required: false
-        default: "false"
+        default: "true"
 
 permissions:
   id-token: write
@@ -118,6 +118,14 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Configurar o Kubectl 
+        run: az aks get-credentials --resource-group KUBERNETES --name ${{ secrets.AZURE_CLUSTERKUBERNETES }} --admin
+
+      - name: Deletar os Pods e Services
+        run: |
+          kubectl delete -f ./src/eks/deployment.yml
+          kubectl delete -f ./src/prometheus/deployment.yml
 
       - name: Set UP Terraform
         uses: hashicorp/setup-terraform@v3
