@@ -43,7 +43,7 @@ kind: Deployment
 metadata:
   name: fakeshop
 spec:
-  replicas: 20
+  replicas: 5
   selector:
     matchLabels:
       app: fakeshop
