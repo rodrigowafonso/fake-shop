@@ -7,7 +7,7 @@ on:
     inputs:
       destroy:
         description: Set to true to destroy th VPC and AKS
-        required: false
+        required: true
         default: "true"
 
 permissions:
